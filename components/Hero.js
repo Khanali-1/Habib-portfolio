@@ -39,7 +39,7 @@ export default function Hero() {
             </motion.div>
             <motion.div variants={item} className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
               <a href="#projects" className="btn-primary">Explore My Work</a>
-              <a  href="/reusme/cv.pdf" download className="btn-ghost"><FiDownload /> Download CV</a>
+              <a  href="/resume/cv.pdf" download className="btn-ghost"><FiDownload /> Download CV</a>
             </motion.div>
             <motion.div variants={item} className="mt-9 flex justify-center gap-3 lg:justify-start">
               <a href={SOCIAL.github} aria-label="GitHub" className="glass lift grid h-11 w-11 place-items-center rounded-full"><FiGithub /></a>
