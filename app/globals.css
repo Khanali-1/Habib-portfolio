@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Design tokens
+   *-rgb vars are space-separated channels so Tailwind opacity modifiers work
+   (e.g. bg-accent/20). Plain vars (--bg, --line ...) are kept for custom CSS.
+   ========================================================================== */
+:root {
+  --bg-rgb: 246 248 252; --deep-rgb: 236 241 249; --fg-rgb: 15 23 42;
+  --accent-rgb: 37 99 235; --accent-2-rgb: 59 130 246; --violet-rgb: 124 58 237;
+  --bg: rgb(var(--bg-rgb)); --bg-deep: rgb(var(--deep-rgb)); --fg: rgb(var(--fg-rgb));
+  --accent: rgb(var(--accent-rgb)); --accent-2: rgb(var(--accent-2-rgb));
+  --surface: rgba(255,255,255,.7); --surface-2: rgba(255,255,255,.88); --line: rgba(15,23,42,.1);
+  --muted: #475569;
+  --shadow: 0 20px 50px -20px rgba(37,99,235,.25);
+}
+[data-theme="dark"] {
+  /* richer, slightly blue-tinted blacks instead of flat #050505 */
+  --bg-rgb: 7 9 16; --deep-rgb: 3 4 9; --fg-rgb: 244 246 251;
+  --accent-rgb: 59 130 246; --accent-2-rgb: 37 99 235; --violet-rgb: 139 92 246;
+  --surface: rgba(255,255,255,.045); --surface-2: rgba(10,14,26,.78); --line: rgba(255,255,255,.1);
+  --muted: #9aa3b5;
+  --shadow: 0 24px 60px -24px rgba(59,130,246,.35);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { background: var(--bg); color: var(--fg); transition: background .3s, color .3s; overflow-x: hidden; }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 6px; }
+::selection { background: rgb(var(--accent-rgb) / .35); }
+
+@layer components {
+  .section { @apply relative mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-5 py-24 sm:px-8; }
+  .glass { @apply rounded-2xl border border-line bg-surface backdrop-blur-xl; box-shadow: var(--shadow); }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5; }
+  .btn-primary { @apply btn bg-accent text-white hover:bg-accent2; box-shadow: 0 10px 30px -10px rgb(var(--accent-rgb) / .7); }
+  .btn-ghost { @apply btn border border-line text-fg hover:border-accent; }
+  .pill { @apply rounded-full border border-line px-4 py-1.5 text-sm text-muted; }
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[.24em] text-accent; }
+  .h2 { @apply mb-12 text-center text-3xl font-bold tracking-tight sm:text-5xl lg:text-left; }
+  .lift { @apply transition duration-300 hover:-translate-y-1.5 hover:border-accent; transform-style: preserve-3d; }
+
+  /* Darker, premium card used in Skills / About / Contact */
+  .card-premium {
+    @apply relative overflow-hidden rounded-2xl border border-line bg-surface2 backdrop-blur-xl transition duration-300 hover:-translate-y-1.5 hover:border-accent/60;
+    box-shadow: var(--shadow);
+  }
+  .card-premium::before { /* top accent hairline */
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; opacity: .45; transition: opacity .3s;
+    background: linear-gradient(90deg, transparent, rgb(var(--accent-rgb) / .9), transparent);
+  }
+  .card-premium::after { /* corner glow */
+    content: ""; position: absolute; right: -30%; top: -40%; width: 70%; height: 90%; pointer-events: none; opacity: 0; transition: opacity .4s;
+    background: radial-gradient(closest-side, rgb(var(--accent-rgb) / .22), transparent);
+  }
+  .card-premium:hover::before, .card-premium:hover::after { opacity: 1; }
+
+  .field { @apply w-full rounded-xl border border-line bg-bg/40 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted focus:border-accent focus:bg-bg/70; }
+}
+
+/* ==========================================================================
+   Hero background (elevated, glowing, glass-like)
+   ========================================================================== */
+.hero-bg {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden;
+  background:
+    radial-gradient(60% 50% at 78% 28%, rgb(var(--accent-rgb) / .24), transparent 70%),
+    radial-gradient(45% 40% at 8% 88%, rgb(var(--violet-rgb) / .18), transparent 70%),
+    linear-gradient(180deg, rgb(var(--deep-rgb)) 0%, rgb(var(--bg-rgb)) 100%);
+}
+.hero-bg::after { /* glass sheen along the bottom edge */
+  content: ""; position: absolute; inset: auto 0 0 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--accent-rgb) / .6), transparent);
+}
+.hero-grid {
+  position: absolute; inset: auto -10% 0 -10%; height: 55%;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px; transform: perspective(520px) rotateX(62deg); transform-origin: bottom;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 90%); mask-image: linear-gradient(to top, #000 10%, transparent 90%);
+}
+
+/* ==========================================================================
+   Intro overlay (always dark, independent of theme) - short & elegant
+   ========================================================================== */
+.intro-bg {
+  background:
+    radial-gradient(55% 50% at 50% 45%, rgba(59,130,246,.22), transparent 70%),
+    radial-gradient(40% 40% at 85% 85%, rgba(139,92,246,.16), transparent 70%),
+    #03040a;
+}
+.intro-ring { /* single slow ring for soft 3D depth */
+  position: absolute; left: 50%; top: 50%; border-radius: 9999px; border: 1px solid rgba(147,197,253,.2);
+  box-shadow: 0 0 80px -20px rgba(59,130,246,.5), inset 0 0 60px -25px rgba(59,130,246,.4);
+  transform: translate(-50%, -50%) rotateX(68deg) rotateZ(0deg); animation: ring-spin 18s linear infinite;
+}
+@keyframes ring-spin { to { transform: translate(-50%, -50%) rotateX(68deg) rotateZ(360deg); } }
+
+/* ==========================================================================
+   3D orbit system (unchanged mechanics; glow added)
+   ========================================================================== */
+.scene { perspective: 1200px; }
+.orbit-glow { position: absolute; inset: 8%; border-radius: 9999px; pointer-events: none; filter: blur(36px);
+  background: radial-gradient(closest-side, rgb(var(--accent-rgb) / .3), rgb(var(--violet-rgb) / .1) 60%, transparent); }
+.orbit-stage { position: relative; margin-inline: auto; width: var(--size); height: var(--size); transform: rotateX(14deg); transform-style: preserve-3d; }
+.orbit-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 9999px; border: 1px dashed var(--line); }
+.orbit { position: absolute; inset: 0; animation: spin var(--dur, 36s) linear infinite; }
+.orbit.reverse { animation-direction: reverse; }
+.orbit-item {
+  position: absolute; top: 50%; left: 50%; margin: calc(var(--b) / -2) 0 0 calc(var(--b) / -2);
+  width: var(--b); height: var(--b);
+  transform: rotate(calc(360deg / var(--n) * var(--i))) translateX(var(--r)) rotate(calc(-360deg / var(--n) * var(--i)));
+}
+.orbit-badge { width: 100%; height: 100%; animation: spin var(--dur, 36s) linear infinite reverse; }
+.orbit.reverse .orbit-badge { animation-direction: normal; }
+.orbit-badge > span { /* light rounded-square tile holding a brand icon */
+  display: grid; place-items: center; width: 100%; height: 100%; border-radius: 28%; font-size: calc(var(--b) * .5);
+  color: var(--c); background: linear-gradient(145deg, #ffffff, #eaf0ff); border: 1px solid rgba(255,255,255,.8);
+  box-shadow: 0 12px 26px -12px rgba(0,0,0,.6), 0 0 30px -10px color-mix(in srgb, var(--c) 60%, transparent);
+  animation: bob 4s ease-in-out infinite; animation-delay: calc(var(--i) * -.7s); }
+.orbit-core { position: absolute; inset: 0; display: grid; place-items: center; animation: float 6s ease-in-out infinite; }
+.orbit-pause:hover .orbit, .orbit-pause:hover .orbit-badge { animation-play-state: paused; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 50% { transform: translateY(-12px); } }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+@keyframes nudge { 50% { transform: translateY(6px); } }
+@keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); } 100% { box-shadow: 0 0 0 10px rgba(34,197,94,0); } }
+.nudge { animation: nudge 1.8s ease-in-out infinite; }
+.dot-live { animation: pulse-dot 1.8s ease-out infinite; }
+
+/* ==========================================================================
+   Timeline (progress line + dots are driven by Framer Motion in Experience.js)
+   ========================================================================== */
+.timeline-glow { box-shadow: 0 0 14px rgb(var(--accent-rgb) / .8); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
